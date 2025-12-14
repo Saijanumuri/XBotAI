@@ -8,13 +8,7 @@ function HomePage() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
-  
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
-  const [showFeedback, setShowFeedback] = useState(false);
-
-  
-  const [activeChatId, setActiveChatId] = useState(null);
+  const history = JSON.parse(localStorage.getItem("history")) || [];
 
   const suggestions = [
     "Hi, what is the weather",
@@ -37,8 +31,7 @@ function HomePage() {
     if (!question.trim()) return;
 
     const found = sampleData.find(
-      item =>
-        item.question.toLowerCase().includes(question.toLowerCase())
+      item => item.question.toLowerCase() === question.toLowerCase()
     );
 
     setMessages(prev => [
@@ -56,7 +49,17 @@ function HomePage() {
     setInput("");
   };
 
- 
+  const saveConversation = () => {
+    if (messages.length === 0) return;
+
+    const updatedHistory = [
+      ...history,
+      { id: Date.now(), messages },
+    ];
+
+    localStorage.setItem("history", JSON.stringify(updatedHistory));
+  };
+
   const setThumbFeedback = (index, value) => {
     setMessages(prev =>
       prev.map((msg, i) =>
@@ -64,37 +67,6 @@ function HomePage() {
       )
     );
   };
-
- 
-  const saveConversation = () => {
-    if (messages.length === 0) return;
-    setShowFeedback(true);
-  };
-
-  
-  const submitFeedback = () => {
-    const history = JSON.parse(localStorage.getItem("history")) || [];
-
-    const newChat = {
-      id: Date.now(),
-      messages,
-      rating,
-      comment,
-    };
-
-    history.push(newChat);
-    localStorage.setItem("history", JSON.stringify(history));
-
-    
-    setMessages([]);
-    setInput("");
-    setRating(0);
-    setComment("");
-    setShowFeedback(false);
-    setActiveChatId(null);
-  };
-
-  const history = JSON.parse(localStorage.getItem("history")) || [];
 
   return (
     <div
@@ -106,7 +78,7 @@ function HomePage() {
         fontFamily: "Ubuntu",
       }}
     >
-      
+    
       <div
         style={{
           width: "25%",
@@ -134,10 +106,6 @@ function HomePage() {
             onClick={() => {
               setMessages([]);
               setInput("");
-              setRating(0);
-              setComment("");
-              setShowFeedback(false);
-              setActiveChatId(null);
             }}
           >
             New Chat
@@ -147,63 +115,40 @@ function HomePage() {
         </div>
 
         
-        <div style={{ padding: "12px", overflowY: "auto", flex: 1 }}>
-          <p
+        <div style={{ padding: "12px", overflowY: "auto" }}>
+          <div
             style={{
+              backgroundColor: "#e6ddfa",
+              padding: "8px 14px",
+              borderRadius: "12px",
               fontWeight: "600",
               fontSize: "14px",
-              marginBottom: "10px",
-              color: "#9785BA",
+              marginBottom: "12px",
+              width: "fit-content",
             }}
           >
-            Previous Chats
-          </p>
+            Past Conversations
+          </div>
 
-          {history.length === 0 && (
-            <p style={{ fontSize: "13px", color: "#777" }}>
-              No conversations yet
-            </p>
-          )}
-
-          {history.map((conv, index) => (
+          {history.map((chat, index) => (
             <div
-              key={conv.id}
-              onClick={() => {
-                setMessages(conv.messages);
-                setRating(conv.rating || 0);
-                setComment(conv.comment || "");
-                setShowFeedback(false);
-                setActiveChatId(conv.id);
-              }}
+              key={chat.id}
+              onClick={() => setMessages(chat.messages)}
               style={{
-                backgroundColor:
-                  activeChatId === conv.id ? "#e0d9f6" : "#f6f3fb",
-                padding: "10px",
+                backgroundColor: "#f6f3fb",
+                padding: "8px",
                 borderRadius: "8px",
-                marginBottom: "8px",
+                marginBottom: "6px",
                 cursor: "pointer",
+                fontSize: "13px",
               }}
             >
-              <p style={{ fontSize: "13px", fontWeight: "500" }}>
-                Chat {index + 1}
-              </p>
-              <p
-                style={{
-                  fontSize: "12px",
-                  color: "#666",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {conv.messages?.[0]?.text || "Conversation"}
-              </p>
+              Chat {index + 1}
             </div>
           ))}
         </div>
       </div>
 
-     
       <div
         style={{
           width: "75%",
@@ -223,7 +168,7 @@ function HomePage() {
           Soul AI
         </span>
 
-        
+       
         {messages.length === 0 && (
           <div
             style={{
@@ -267,7 +212,7 @@ function HomePage() {
           </div>
         )}
 
-        
+       
         {messages.length > 0 && (
           <div style={{ flex: 1, overflowY: "auto", padding: "10px" }}>
             {messages.map((msg, index) => (
@@ -312,6 +257,7 @@ function HomePage() {
                       {msg.text}
                     </p>
 
+                    
                     <div
                       style={{
                         display: "none",
@@ -358,55 +304,14 @@ function HomePage() {
               padding: "0 16px",
               borderRadius: "8px",
               border: "1px solid #ccc",
+              outline: "none",
+              fontSize: "15px",
             }}
           />
 
-          <button type="submit" style={{
-              height: "48px",
-              padding: "0 20px",
-              borderRadius: "8px",
-              border: "none",
-              backgroundColor: "#d7c7f4",
-              fontWeight: "600",
-              cursor: "pointer",
-            }}>Ask</button>
-          <button type="button" onClick={saveConversation} style={{
-              height: "48px",
-              padding: "0 20px",
-              borderRadius: "8px",
-              border: "none",
-              backgroundColor: "#d7c7f4",
-              fontWeight: "600",
-              cursor: "pointer",
-            }}>
-            Save
-          </button>
+          <button type="submit">Ask</button>
+          <button type="button" onClick={saveConversation}>Save</button>
         </form>
-
-        {showFeedback && (
-          <div style={{ marginTop: "20px" }}>
-            <p>Rate this conversation</p>
-
-            {[1, 2, 3, 4, 5].map(n => (
-              <span
-                key={n}
-                onClick={() => setRating(n)}
-                style={{ cursor: "pointer", fontSize: "24px" }}
-              >
-                {n <= rating ? "⭐" : "☆"}
-              </span>
-            ))}
-
-            <textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Share your feedback..."
-              style={{ width: "100%", marginTop: "10px" }}
-            />
-
-            <button onClick={submitFeedback}>Submit</button>
-          </div>
-        )}
       </div>
     </div>
   );
