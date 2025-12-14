@@ -1,0 +1,264 @@
+import React, { useState } from "react";
+import logo from "./assests/Group 1000011095.png";
+import newchatimg from "./assests/image 31.png";
+import logo1 from "./assests/Group 1000011097.png";
+import sampleData from "./sampleData.json";
+
+function HomePage() {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+
+  // ONLY initial suggestions
+  const suggestions = [
+    "Hi, what is the weather",
+    "Hi, what is my location",
+    "Hi, what is the temperature",
+    "Hi, how are you",
+  ];
+
+  const cardStyle = {
+    backgroundColor: "white",
+    width: "460px",
+    height: "110px",
+    borderRadius: "10px",
+    padding: "18px",
+    boxShadow: "0 6px 14px rgba(0,0,0,0.08)",
+    cursor: "pointer",
+  };
+
+  const handleAsk = (question) => {
+    if (!question.trim()) return;
+
+    const found = sampleData.find(
+      item =>
+        item.question.toLowerCase().includes(question.toLowerCase()) ||
+        question.toLowerCase().includes(item.question.toLowerCase())
+    );
+
+    setMessages(prev => [
+      ...prev,
+      { type: "user", text: question },
+      {
+        type: "bot",
+        text: found
+          ? found.response
+          : "Sorry, Did not understand your query!",
+      },
+    ]);
+
+    setInput("");
+  };
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+        width: "100%",
+        backgroundColor: "#e5e0ee",
+        fontFamily: "Ubuntu",
+      }}
+    >
+      {/* SIDEBAR */}
+      <div
+        style={{
+          width: "25%",
+          backgroundColor: "white",
+          borderRight: "1px solid #e0e0e0",
+        }}
+      >
+        <div
+          style={{
+            height: "64px",
+            backgroundColor: "#c1b4d8",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "0 18px",
+          }}
+        >
+          <img src={logo} style={{ height: "42px" }} />
+
+          <p
+            style={{ fontSize: "18px", fontWeight: "500", cursor: "pointer" }}
+            onClick={() => setMessages([])}
+          >
+            New Chat
+          </p>
+
+          <img src={newchatimg} style={{ height: "26px" }} />
+        </div>
+      </div>
+
+      {/* MAIN */}
+      <div
+        style={{
+          width: "75%",
+          padding: "24px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* REQUIRED: Soul AI in span */}
+        <span
+          style={{
+            color: "#9785BA",
+            fontWeight: "700",
+            fontSize: "28px",
+            marginBottom: "16px",
+          }}
+        >
+          Soul AI
+        </span>
+
+        {/* INITIAL VIEW ONLY */}
+        {messages.length === 0 && (
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <p style={{ fontSize: "22px", fontWeight: "600" }}>
+              How can I help you today?
+            </p>
+
+            <img
+              src={logo1}
+              style={{ width: "65px", height: "69px", margin: "20px 0" }}
+            />
+
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "22px",
+                justifyContent: "center",
+              }}
+            >
+              {suggestions.map((text, index) => (
+                <div
+                  key={index}
+                  style={cardStyle}
+                  onClick={() => handleAsk(text)}
+                >
+                  <p style={{ fontWeight: "600" }}>{text}</p>
+                  <p style={{ fontSize: "14px", color: "#666" }}>
+                    Get immediate AI generated response
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* CHAT VIEW */}
+        {messages.length > 0 && (
+          <div style={{ flex: 1, overflowY: "auto", padding: "10px" }}>
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                style={{
+                  marginBottom: "12px",
+                  textAlign: msg.type === "user" ? "right" : "left",
+                }}
+              >
+                {msg.type === "user" ? (
+                  <span
+                    style={{
+                      display: "inline-block",
+                      padding: "10px 14px",
+                      borderRadius: "10px",
+                      backgroundColor: "#d7c7f4",
+                    }}
+                  >
+                    {msg.text}
+                  </span>
+                ) : (
+                  /* REQUIRED: AI response in <p> */
+                  <p
+                    style={{
+                      display: "inline-block",
+                      padding: "10px 14px",
+                      borderRadius: "10px",
+                      backgroundColor: "white",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    {msg.text}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* INPUT AREA */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleAsk(input);
+          }}
+          style={{
+            marginTop: "16px",
+            display: "flex",
+            gap: "12px",
+            justifyContent: "center",
+          }}
+        >
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Message Bot AI…"
+            style={{
+              width: "700px",
+              height: "48px",
+              padding: "0 16px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              outline: "none",
+              fontSize: "15px",
+            }}
+          />
+
+          {/* REQUIRED: Ask type submit */}
+          <button
+            type="submit"
+            style={{
+              height: "48px",
+              padding: "0 20px",
+              borderRadius: "8px",
+              border: "none",
+              backgroundColor: "#d7c7f4",
+              fontWeight: "600",
+              cursor: "pointer",
+            }}
+          >
+            Ask
+          </button>
+
+          {/* REQUIRED: Save type button */}
+          <button
+            type="button"
+            style={{
+              height: "48px",
+              padding: "0 20px",
+              borderRadius: "8px",
+              border: "none",
+              backgroundColor: "#d7c7f4",
+              fontWeight: "600",
+              cursor: "pointer",
+            }}
+          >
+            Save
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default HomePage;
