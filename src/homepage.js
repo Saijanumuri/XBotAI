@@ -136,7 +136,14 @@ function HomePage() {
         </div>
       </div>
 
-
+<h1
+          style={{
+            fontSize: "28px",
+            fontWeight: "700",
+            color: "#9785BA"
+          }}
+        >Bot AI
+        </h1>
       <div
         style={{
           width: "75%",
@@ -146,15 +153,7 @@ function HomePage() {
           overflow: "hidden",
         }}
       >
-        <h1
-          style={{
-            fontSize: "28px",
-            fontWeight: "700",
-            color: "#9785BA",
-            marginBottom: "12px",
-          }}
-        >Bot AI
-        </h1>
+        
 
 
         {messages.length === 0 && (
