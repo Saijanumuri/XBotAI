@@ -99,12 +99,13 @@ function HomePage() {
           }}
         >
           <img src={logo} alt="" style={{ height: "42px" }} />
-          <p
+          {/* <p
             style={{ fontWeight: "600", cursor: "pointer" }}
             onClick={() => setMessages([])}
           >
             New Chat
-          </p>
+          </p> */}
+          <button onClick={() => setMessages([])} style={{ fontWeight: "600", cursor: "pointer" ,border:"none",backgroundColor:"transparent",fontSize:"20px"}} >New Chat</button>
           <img src={newchatimg} alt="" style={{ height: "26px" }} />
         </div>
 
@@ -145,7 +146,7 @@ function HomePage() {
           overflow: "hidden",
         }}
       >
-        <span
+        <h1
           style={{
             fontSize: "28px",
             fontWeight: "700",
@@ -153,7 +154,7 @@ function HomePage() {
             marginBottom: "12px",
           }}
         >Bot AI
-        </span>
+        </h1>
 
 
         {messages.length === 0 && (
