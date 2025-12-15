@@ -246,7 +246,7 @@ function HomePage() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Message Bot AI…"
+            placeholder="Message Bot AI..."
             style={{
               flex: 1,
               height: "48px",
