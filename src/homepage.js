@@ -4,7 +4,7 @@ import logo from "./assests/Group 1000011095.png";
 import newchatimg from "./assests/image 31.png";
 import logo1 from "./assests/Group 1000011097.png";
 import sampleData from "./sampleData.json";
-import {Link} from "react-router-dom"; 
+import { Link } from "react-router-dom";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -105,23 +105,45 @@ function HomePage() {
           >
             New Chat
           </p> */}
-          <button onClick={() => setMessages([])} style={{ fontWeight: "600", cursor: "pointer" ,border:"none",backgroundColor:"transparent",fontSize:"20px"}} >New Chat</button>
-          <img src={newchatimg} alt="" style={{ height: "26px" }} />
+          <a
+            href="/"
+            onClick={() => setMessages([])}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              textDecoration: "none",
+              color: "inherit",
+              cursor: "pointer"
+            }}
+          >
+            <span
+              style={{
+                fontWeight: "600",
+                fontSize: "20px"
+              }}
+            >
+              New Chat
+            </span>
+
+            <img src={newchatimg} alt="New Chat" style={{ height: "26px" }} />
+          </a>
+
         </div>
 
-        
 
-       
+
+
         <div style={{ padding: "12px" }}>
           <Link
-            to="/history" 
-            data-testid="past-conversations-btn" 
+            to="/history"
+            data-testid="past-conversations-btn"
             style={{
-             
-              display: "block", 
+
+              display: "block",
               textAlign: "center",
-              textDecoration: "none", 
-              color: "inherit", 
+              textDecoration: "none",
+              color: "inherit",
               width: "100%",
               backgroundColor: "#d7c7f4",
               border: "none",
@@ -136,14 +158,14 @@ function HomePage() {
         </div>
       </div>
 
-<h1
-          style={{
-            fontSize: "28px",
-            fontWeight: "700",
-            color: "#9785BA"
-          }}
-        >Bot AI
-        </h1>
+      <h1
+        style={{
+          fontSize: "28px",
+          fontWeight: "700",
+          color: "#9785BA"
+        }}
+      >Bot AI
+      </h1>
       <div
         style={{
           width: "75%",
@@ -153,7 +175,7 @@ function HomePage() {
           overflow: "hidden",
         }}
       >
-        
+
 
 
         {messages.length === 0 && (

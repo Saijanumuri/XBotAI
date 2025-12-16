@@ -1,11 +1,12 @@
-import React from "react";
+import React,{useState} from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "./assests/Group 1000011095.png"; 
-import editIcon from "./assests/image 31.png"; 
-
+import logo from "./assests/Group 1000011095.png";
+import editIcon from "./assests/image 31.png";
+import newchatimg from "./assests/image 31.png";
 function HistoryPage() {
   const navigate = useNavigate();
   const history = JSON.parse(localStorage.getItem("history")) || [];
+  const [messages, setMessages] = useState([]);
 
   return (
     <div
@@ -16,7 +17,7 @@ function HistoryPage() {
         fontFamily: "Ubuntu",
       }}
     >
-      
+
       <div
         style={{
           width: "25%",
@@ -25,7 +26,7 @@ function HistoryPage() {
           borderRight: "1px solid #ddd",
         }}
       >
-       
+
         <div
           onClick={() => navigate("/")}
           style={{
@@ -44,34 +45,42 @@ function HistoryPage() {
             (e.currentTarget.style.backgroundColor = "#cfc3e6")
           }
         >
-         
+
           <img
             src={logo}
             alt="logo"
             style={{ width: "28px", height: "28px" }}
           />
 
-          
-          <span
+
+          <a
+            href="/"
+            onClick={() => setMessages([])}
             style={{
-              fontSize: "18px",
-              fontWeight: "700",
-              color: "#000",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              textDecoration: "none",
+              color: "inherit",
+              cursor: "pointer"
             }}
           >
-            New Chat
-          </span>
+            <span
+              style={{
+                fontWeight: "600",
+                fontSize: "20px"
+              }}
+            >
+              New Chat
+            </span>
 
-         
-          <img
-            src={editIcon}
-            alt="edit"
-            style={{ width: "20px", height: "20px" }}
-          />
+            <img src={newchatimg} alt="New Chat" style={{ height: "26px" }} />
+          </a>
+
         </div>
       </div>
 
-      
+
       <div
         style={{
           width: "75%",
