@@ -218,9 +218,9 @@ function HomePage() {
                   marginBottom: "14px",
                 }}
               >
-                <p style={{ fontWeight: "600", marginBottom: "4px" }}>
+                <span style={{ fontWeight: "600", marginBottom: "4px" }}>
                   {msg.type === "user" ? "You" : "Soul AI"}
-                </p>
+                </span>
 
                 <p style={{ marginBottom: "6px" }}>{msg.text}</p>
 
