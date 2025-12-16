@@ -97,7 +97,7 @@ function HistoryPage() {
                 marginBottom: "14px",
               }}
             >
-              <p>{msg.type === "user" ? "You" : "Soul AI"}</p>
+              <span>{msg.type === "user" ? "You" : "Soul AI"}</span>
 
               <p style={{ marginTop: "6px" }}>{msg.text}</p>
 

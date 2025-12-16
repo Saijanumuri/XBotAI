@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "./assests/Group 1000011095.png";
 import newchatimg from "./assests/image 31.png";
 import logo1 from "./assests/Group 1000011097.png";
 import sampleData from "./sampleData.json";
+import {Link} from "react-router-dom"; 
 
 function HomePage() {
+  const navigate = useNavigate();
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [history, setHistory] = useState([]);
 
-  // ONLY initial suggestions
   const suggestions = [
     "Hi, what is the weather",
     "Hi, what is my location",
@@ -16,37 +20,52 @@ function HomePage() {
     "Hi, how are you",
   ];
 
-  const cardStyle = {
-    backgroundColor: "white",
-    width: "460px",
-    height: "110px",
-    borderRadius: "10px",
-    padding: "18px",
-    boxShadow: "0 6px 14px rgba(0,0,0,0.08)",
-    cursor: "pointer",
-  };
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("history")) || [];
+    setHistory(saved);
+  }, []);
 
   const handleAsk = (question) => {
     if (!question.trim()) return;
 
     const found = sampleData.find(
-      item =>
-        item.question.toLowerCase().includes(question.toLowerCase()) ||
-        question.toLowerCase().includes(item.question.toLowerCase())
+      (item) => item.question.toLowerCase() === question.toLowerCase()
     );
 
-    setMessages(prev => [
+    const time = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    setMessages((prev) => [
       ...prev,
-      { type: "user", text: question },
+      { type: "user", text: question, time },
       {
         type: "bot",
         text: found
           ? found.response
           : "Sorry, Did not understand your query!",
+        feedback: null,
+        time,
       },
     ]);
 
     setInput("");
+  };
+
+  const saveConversation = () => {
+    if (!messages.length) return;
+
+    const updated = [...history, { id: Date.now(), messages }];
+    localStorage.setItem("history", JSON.stringify(updated));
+    setHistory(updated);
+    setMessages([]);
+  };
+
+  const handleFeedback = (index, value) => {
+    setMessages((prev) =>
+      prev.map((m, i) => (i === index ? { ...m, feedback: value } : m))
+    );
   };
 
   return (
@@ -54,17 +73,19 @@ function HomePage() {
       style={{
         display: "flex",
         height: "100vh",
-        width: "100%",
         backgroundColor: "#e5e0ee",
         fontFamily: "Ubuntu",
+        overflow: "hidden",
       }}
     >
-      {/* SIDEBAR */}
+
       <div
         style={{
           width: "25%",
           backgroundColor: "white",
           borderRight: "1px solid #e0e0e0",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <div
@@ -77,41 +98,64 @@ function HomePage() {
             padding: "0 18px",
           }}
         >
-          <img src={logo} style={{ height: "42px" }} />
-
-          <p
-            style={{ fontSize: "18px", fontWeight: "500", cursor: "pointer" }}
+          <img src={logo} alt="" style={{ height: "42px" }} />
+          {/* <p
+            style={{ fontWeight: "600", cursor: "pointer" }}
             onClick={() => setMessages([])}
           >
             New Chat
-          </p>
+          </p> */}
+          <button onClick={() => setMessages([])} style={{ fontWeight: "600", cursor: "pointer" ,border:"none",backgroundColor:"transparent",fontSize:"20px"}} >New Chat</button>
+          <img src={newchatimg} alt="" style={{ height: "26px" }} />
+        </div>
 
-          <img src={newchatimg} style={{ height: "26px" }} />
+        
+
+       
+        <div style={{ padding: "12px" }}>
+          <Link
+            to="/history" 
+            data-testid="past-conversations-btn" 
+            style={{
+             
+              display: "block", 
+              textAlign: "center",
+              textDecoration: "none", 
+              color: "inherit", 
+              width: "100%",
+              backgroundColor: "#d7c7f4",
+              border: "none",
+              borderRadius: "10px",
+              padding: "10px",
+              fontWeight: "600",
+              cursor: "pointer",
+            }}
+          >
+            Past Conversations
+          </Link>
         </div>
       </div>
 
-      {/* MAIN */}
+<h1
+          style={{
+            fontSize: "28px",
+            fontWeight: "700",
+            color: "#9785BA"
+          }}
+        >Bot AI
+        </h1>
       <div
         style={{
           width: "75%",
           padding: "24px",
           display: "flex",
           flexDirection: "column",
+          overflow: "hidden",
         }}
       >
-        {/* REQUIRED: Soul AI in span */}
-        <span
-          style={{
-            color: "#9785BA",
-            fontWeight: "700",
-            fontSize: "28px",
-            marginBottom: "16px",
-          }}
-        >
-          Soul AI
-        </span>
+        
 
-        {/* INITIAL VIEW ONLY */}
+
         {messages.length === 0 && (
           <div
             style={{
@@ -120,32 +164,38 @@ function HomePage() {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
+              overflow: "hidden",
             }}
           >
-            <p style={{ fontSize: "22px", fontWeight: "600" }}>
-              How can I help you today?
+            <p style={{ fontSize: "26px", fontWeight: "600", marginBottom: "16px" }}>
+              How Can I Help You Today?
             </p>
 
-            <img
-              src={logo1}
-              style={{ width: "65px", height: "69px", margin: "20px 0" }}
-            />
+            <img src={logo1} alt="" style={{ marginBottom: "30px" }} />
 
             <div
               style={{
                 display: "flex",
                 flexWrap: "wrap",
-                gap: "22px",
+                gap: "20px",
                 justifyContent: "center",
               }}
             >
-              {suggestions.map((text, index) => (
+              {suggestions.map((text, i) => (
                 <div
-                  key={index}
-                  style={cardStyle}
+                  key={i}
                   onClick={() => handleAsk(text)}
+                  style={{
+                    backgroundColor: "white",
+                    width: "460px",
+                    height: "110px",
+                    borderRadius: "10px",
+                    padding: "18px",
+                    boxShadow: "0 6px 14px rgba(0,0,0,0.08)",
+                    cursor: "pointer",
+                  }}
                 >
-                  <p style={{ fontWeight: "600" }}>{text}</p>
+                  <p style={{ fontWeight: "600", marginBottom: "6px" }}>{text}</p>
                   <p style={{ fontSize: "14px", color: "#666" }}>
                     Get immediate AI generated response
                   </p>
@@ -155,102 +205,89 @@ function HomePage() {
           </div>
         )}
 
-        {/* CHAT VIEW */}
+
         {messages.length > 0 && (
-          <div style={{ flex: 1, overflowY: "auto", padding: "10px" }}>
-            {messages.map((msg, index) => (
+          <div style={{ flex: 1, overflowY: "auto", marginTop: "12px" }}>
+            {messages.map((msg, i) => (
               <div
-                key={index}
+                key={i}
                 style={{
-                  marginBottom: "12px",
-                  textAlign: msg.type === "user" ? "right" : "left",
+                  backgroundColor: "#f3f0fa",
+                  borderRadius: "14px",
+                  padding: "14px 18px",
+                  marginBottom: "14px",
                 }}
               >
-                {msg.type === "user" ? (
-                  <span
-                    style={{
-                      display: "inline-block",
-                      padding: "10px 14px",
-                      borderRadius: "10px",
-                      backgroundColor: "#d7c7f4",
-                    }}
-                  >
-                    {msg.text}
-                  </span>
-                ) : (
-                  /* REQUIRED: AI response in <p> */
-                  <p
-                    style={{
-                      display: "inline-block",
-                      padding: "10px 14px",
-                      borderRadius: "10px",
-                      backgroundColor: "white",
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                    }}
-                  >
-                    {msg.text}
-                  </p>
-                )}
+                <p style={{ fontWeight: "600", marginBottom: "4px" }}>
+                  {msg.type === "user" ? "You" : "Soul AI"}
+                </p>
+
+                <p style={{ marginBottom: "6px" }}>{msg.text}</p>
+
+                <div style={{ display: "flex", gap: "10px", fontSize: "12px", color: "#777" }}>
+                  <span>{msg.time}</span>
+                  {msg.type === "bot" && (
+                    <>
+                      <span style={{ cursor: "pointer" }} onClick={() => handleFeedback(i, "like")}>👍</span>
+                      <span style={{ cursor: "pointer" }} onClick={() => handleFeedback(i, "dislike")}>👎</span>
+                    </>
+                  )}
+                </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* INPUT AREA */}
+
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleAsk(input);
           }}
           style={{
-            marginTop: "16px",
             display: "flex",
             gap: "12px",
-            justifyContent: "center",
+            marginTop: "16px",
+            paddingTop: "12px",
+            borderTop: "1px solid #ddd",
           }}
         >
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Message Bot AI…"
+            placeholder="Message Bot AI..."
             style={{
-              width: "700px",
+              flex: 1,
               height: "48px",
-              padding: "0 16px",
               borderRadius: "8px",
               border: "1px solid #ccc",
-              outline: "none",
+              padding: "0 16px",
               fontSize: "15px",
             }}
           />
 
-          {/* REQUIRED: Ask type submit */}
           <button
             type="submit"
             style={{
-              height: "48px",
-              padding: "0 20px",
-              borderRadius: "8px",
-              border: "none",
               backgroundColor: "#d7c7f4",
+              border: "none",
+              borderRadius: "8px",
+              padding: "0 20px",
               fontWeight: "600",
-              cursor: "pointer",
             }}
           >
             Ask
           </button>
 
-          {/* REQUIRED: Save type button */}
           <button
             type="button"
+            onClick={saveConversation}
             style={{
-              height: "48px",
-              padding: "0 20px",
-              borderRadius: "8px",
-              border: "none",
               backgroundColor: "#d7c7f4",
+              border: "none",
+              borderRadius: "8px",
+              padding: "0 20px",
               fontWeight: "600",
-              cursor: "pointer",
             }}
           >
             Save
